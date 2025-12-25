@@ -1,0 +1,125 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.backgroundOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background: #000;
+  /* Fallback */
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.logoText {
+  font-family: var(--font-orbitron);
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary);
+  animation: pulse 3s infinite;
+}
+
+.tagline {
+  font-family: var(--font-inter);
+  font-size: 1.25rem;
+  color: #ccc;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  z-index: 1;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: 0 0 30px rgba(0, 255, 148, 0.2);
+}
+
+.cardText {
+  font-family: var(--font-orbitron);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.footer {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.8rem;
+  color: #666;
+  z-index: 1;
+}
+
+@keyframes pulse {
+  0% {
+    text-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary);
+  }
+
+  50% {
+    text-shadow: 0 0 30px var(--primary), 0 0 60px var(--primary);
+  }
+
+  100% {
+    text-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary);
+  }
+}
+
+@media (max-width: 600px) {
+  .logoText {
+    font-size: 2.5rem;
+  }
+
+  .grid {
+    width: 100%;
+  }
+}
