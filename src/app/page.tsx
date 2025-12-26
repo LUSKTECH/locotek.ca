@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Twitter, Music } from "lucide-react";
+import { Facebook, X, SoundCloud } from "@/components/Icons";
 import styles from "./page.module.css";
 
 // Assuming Lucide doesn't have SoundCloud, using CloudLightning or Music as placeholder, 
@@ -38,18 +38,17 @@ export default function Home() {
 
       <div className={styles.grid}>
         <Link href="https://www.facebook.com/Locotek/" target="_blank" rel="noopener noreferrer" className={styles.card}>
-          <Facebook color="#00ff94" />
+          <Facebook color="#00ff94" width={24} height={24} />
           <span className={styles.cardText}>Facebook</span>
         </Link>
 
         <Link href="https://soundcloud.com/locotek" target="_blank" rel="noopener noreferrer" className={styles.card}>
-          {/* SoundCloud usually orange, but keeping theme consistent */}
-          <Music color="#00ff94" />
+          <SoundCloud color="#00ff94" width={24} height={24} />
           <span className={styles.cardText}>SoundCloud</span>
         </Link>
 
         <Link href="https://x.com/LocotekOfficial" target="_blank" rel="noopener noreferrer" className={styles.card}>
-          <Twitter color="#00ff94" />
+          <X color="#00ff94" width={24} height={24} />
           <span className={styles.cardText}>X</span>
         </Link>
       </div>
