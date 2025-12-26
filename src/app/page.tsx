@@ -32,7 +32,16 @@ export default function Home() {
       </div>
 
       <div className={styles.hero}>
-        <h1 className={styles.logoText}>LOCOTEK</h1>
+        <h1 className={styles.logoWrapper}>
+          <Image
+            src="/logo.svg"
+            alt="LOCOTEK"
+            width={600}
+            height={120}
+            className={styles.logo}
+            priority
+          />
+        </h1>
         <p className={styles.tagline}>Toronto-based DJ & Producer</p>
       </div>
 

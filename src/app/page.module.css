@@ -29,17 +29,16 @@
   z-index: 1;
   text-align: center;
   margin-bottom: 3rem;
+  width: 100%;
 }
 
-.logoText {
-  font-family: var(--font-orbitron);
-  font-size: 4rem;
-  font-weight: 900;
-  letter-spacing: 0.2em;
-  color: #fff;
-  text-transform: uppercase;
+.logo {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
   margin-bottom: 0.5rem;
-  text-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary);
+  /* Invert black logo to white, and add neon glow using drop-shadow */
+  filter: invert(1) drop-shadow(0 0 10px var(--secondary)) drop-shadow(0 0 20px var(--secondary));
   animation: pulse 3s infinite;
 }
 
@@ -102,21 +101,21 @@
 
 @keyframes pulse {
   0% {
-    text-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary);
+    filter: invert(1) drop-shadow(0 0 10px var(--secondary)) drop-shadow(0 0 20px var(--secondary));
   }
 
   50% {
-    text-shadow: 0 0 30px var(--primary), 0 0 60px var(--primary);
+    filter: invert(1) drop-shadow(0 0 15px var(--primary)) drop-shadow(0 0 30px var(--primary));
   }
 
   100% {
-    text-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary);
+    filter: invert(1) drop-shadow(0 0 10px var(--secondary)) drop-shadow(0 0 20px var(--secondary));
   }
 }
 
 @media (max-width: 600px) {
-  .logoText {
-    font-size: 2.5rem;
+  .logo {
+    max-width: 300px;
   }
 
   .grid {

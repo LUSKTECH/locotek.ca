@@ -1,8 +1,11 @@
 # Locotek.ca
 
-[![Lint Code Base](https://github.com/LUSKTECH/locotek.ca/actions/workflows/lint.yml/badge.svg)](https://github.com/LUSKTECH/locotek.ca/actions/workflows/lint.yml)
-[![Code Coverage](https://github.com/LUSKTECH/locotek.ca/actions/workflows/coverage.yml/badge.svg)](https://github.com/LUSKTECH/locotek.ca/actions/workflows/coverage.yml)
+[![CI Analysis](https://github.com/LUSKTECH/locotek.ca/actions/workflows/ci.yml/badge.svg)](https://github.com/LUSKTECH/locotek.ca/actions/workflows/ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=LUSKTECH_locotek.ca&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=LUSKTECH_locotek.ca)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=LUSKTECH_locotek.ca&metric=coverage)](https://sonarcloud.io/summary/new_code?id=LUSKTECH_locotek.ca)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=LUSKTECH_locotek.ca&metric=bugs)](https://sonarcloud.io/summary/new_code?id=LUSKTECH_locotek.ca)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=LUSKTECH_locotek.ca&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=LUSKTECH_locotek.ca)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=LUSKTECH_locotek.ca&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=LUSKTECH_locotek.ca)
 ![Next.js](https://img.shields.io/badge/next.js-v16-black?style=flat&logo=next.js&logoColor=white)
 ![Node.js](https://img.shields.io/badge/node.js-v24-green?style=flat&logo=nodedotjs&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat)
