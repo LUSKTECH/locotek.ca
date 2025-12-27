@@ -23,6 +23,11 @@ interface EmailEntry {
   email: string;
   timestamp: string;
   userAgent?: string;
+  ip?: string;
+  referer?: string;
+  language?: string;
+  country?: string;
+  city?: string;
 }
 
 async function saveToRedis(entry: EmailEntry): Promise<void> {
@@ -49,15 +54,45 @@ async function sendNotificationEmail(entry: EmailEntry): Promise<void> {
   }
 
   try {
+    const locationParts = [entry.city, entry.country].filter(Boolean);
+    const location = locationParts.length > 0 ? locationParts.join(", ") : "Unknown";
+
     await resend.emails.send({
       from: FROM_EMAIL,
       to: NOTIFICATION_EMAIL,
       subject: "Press Kit Downloaded",
       html: `
         <h2>New Press Kit Download</h2>
-        <p><strong>Email:</strong> ${entry.email}</p>
-        <p><strong>Time:</strong> ${new Date(entry.timestamp).toLocaleString()}</p>
-        <p><strong>User Agent:</strong> ${entry.userAgent || "Unknown"}</p>
+        <table style="border-collapse: collapse; font-family: sans-serif;">
+          <tr>
+            <td style="padding: 8px 16px 8px 0; font-weight: bold;">Email:</td>
+            <td style="padding: 8px 0;">${entry.email}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 16px 8px 0; font-weight: bold;">Time:</td>
+            <td style="padding: 8px 0;">${new Date(entry.timestamp).toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 16px 8px 0; font-weight: bold;">Location:</td>
+            <td style="padding: 8px 0;">${location}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 16px 8px 0; font-weight: bold;">IP Address:</td>
+            <td style="padding: 8px 0;">${entry.ip || "Unknown"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 16px 8px 0; font-weight: bold;">Referrer:</td>
+            <td style="padding: 8px 0;">${entry.referer || "Direct"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 16px 8px 0; font-weight: bold;">Language:</td>
+            <td style="padding: 8px 0;">${entry.language || "Unknown"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 16px 8px 0; font-weight: bold;">User Agent:</td>
+            <td style="padding: 8px 0; font-size: 12px; color: #666;">${entry.userAgent || "Unknown"}</td>
+          </tr>
+        </table>
       `,
     });
   } catch (error) {
@@ -91,6 +126,14 @@ export async function POST(request: NextRequest) {
       email: email.toLowerCase().trim(),
       timestamp: new Date().toISOString(),
       userAgent: request.headers.get("user-agent") || undefined,
+      ip: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() 
+        || request.headers.get("x-real-ip") 
+        || undefined,
+      referer: request.headers.get("referer") || undefined,
+      language: request.headers.get("accept-language")?.split(",")[0] || undefined,
+      // Vercel provides geo headers
+      country: request.headers.get("x-vercel-ip-country") || undefined,
+      city: request.headers.get("x-vercel-ip-city") || undefined,
     };
 
     // Save to Redis and send notification in parallel
