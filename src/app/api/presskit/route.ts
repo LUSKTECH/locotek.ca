@@ -15,8 +15,9 @@ const redis = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
     })
   : null;
 
-// Email to receive notifications
+// Email configuration
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || "";
+const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
 
 interface EmailEntry {
   email: string;
@@ -49,7 +50,7 @@ async function sendNotificationEmail(entry: EmailEntry): Promise<void> {
 
   try {
     await resend.emails.send({
-      from: "LOCOTEK <noreply@locotek.ca>",
+      from: FROM_EMAIL,
       to: NOTIFICATION_EMAIL,
       subject: "Press Kit Downloaded",
       html: `
