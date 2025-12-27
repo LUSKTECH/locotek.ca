@@ -34,8 +34,19 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
       onClose();
     };
 
+    // Handle backdrop click by checking if click is on the dialog itself (not content)
+    const handleClick = (e: MouseEvent) => {
+      if (e.target === dialog) {
+        onClose();
+      }
+    };
+
     dialog.addEventListener("cancel", handleCancel);
-    return () => dialog.removeEventListener("cancel", handleCancel);
+    dialog.addEventListener("click", handleClick);
+    return () => {
+      dialog.removeEventListener("cancel", handleCancel);
+      dialog.removeEventListener("click", handleClick);
+    };
   }, [onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,17 +88,10 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
     }
   };
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target === dialogRef.current) {
-      onClose();
-    }
-  };
-
   return (
     <dialog 
       ref={dialogRef}
       className={styles.dialog}
-      onClick={handleBackdropClick}
       aria-labelledby="modal-title"
     >
       <div className={styles.modal}>
