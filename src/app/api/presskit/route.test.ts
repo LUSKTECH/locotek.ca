@@ -13,6 +13,13 @@ jest.mock('resend', () => ({
     })),
 }))
 
+// Mock Vercel KV
+jest.mock('@vercel/kv', () => ({
+    kv: {
+        zadd: jest.fn().mockResolvedValue(1),
+    },
+}))
+
 describe('Presskit API Route', () => {
     beforeEach(() => {
         jest.clearAllMocks()

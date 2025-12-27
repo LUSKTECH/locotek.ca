@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { kv } from "@vercel/kv";
 
 // Initialize Resend - will be undefined if API key not set
 const resend = process.env.RESEND_API_KEY 
@@ -9,10 +10,30 @@ const resend = process.env.RESEND_API_KEY
 // Email to receive notifications
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || "";
 
+// Check if KV is configured
+const isKvConfigured = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+
 interface EmailEntry {
   email: string;
   timestamp: string;
   userAgent?: string;
+}
+
+async function saveToKv(entry: EmailEntry): Promise<void> {
+  if (!isKvConfigured) {
+    console.log("KV storage skipped - not configured");
+    return;
+  }
+
+  try {
+    // Store in a sorted set with timestamp as score for easy retrieval
+    await kv.zadd("presskit:emails", {
+      score: Date.now(),
+      member: JSON.stringify(entry),
+    });
+  } catch (error) {
+    console.error("Failed to save to KV:", error);
+  }
 }
 
 async function sendNotificationEmail(entry: EmailEntry): Promise<void> {
@@ -66,8 +87,11 @@ export async function POST(request: NextRequest) {
       userAgent: request.headers.get("user-agent") || undefined,
     };
 
-    // Send notification email (non-blocking, won't fail request)
-    await sendNotificationEmail(entry);
+    // Save to KV and send notification in parallel
+    await Promise.all([
+      saveToKv(entry),
+      sendNotificationEmail(entry),
+    ]);
 
     return NextResponse.json({ 
       success: true,
