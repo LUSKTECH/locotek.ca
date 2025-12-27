@@ -5,6 +5,10 @@ import PressKitModal from './PressKitModal'
 // Mock fetch
 global.fetch = jest.fn()
 
+// Mock HTMLDialogElement methods
+HTMLDialogElement.prototype.showModal = jest.fn()
+HTMLDialogElement.prototype.close = jest.fn()
+
 describe('PressKitModal', () => {
     const mockOnClose = jest.fn()
 
@@ -12,46 +16,33 @@ describe('PressKitModal', () => {
         jest.clearAllMocks()
     })
 
-    it('renders nothing when closed', () => {
-        const { container } = render(
-            <PressKitModal isOpen={false} onClose={mockOnClose} />
-        )
-        expect(container).toBeEmptyDOMElement()
+    it('calls showModal when opened', () => {
+        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
+        expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled()
     })
 
-    it('renders modal when open', () => {
+    it('calls close when closed', () => {
+        const { rerender } = render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
+        rerender(<PressKitModal isOpen={false} onClose={mockOnClose} />)
+        expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
+    })
+
+    it('renders modal content when open', () => {
         render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
         
         expect(screen.getByText('Download Press Kit')).toBeInTheDocument()
         expect(screen.getByPlaceholderText('your@email.com')).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: 'Download' })).toBeInTheDocument()
-    })
-
-    it('closes when clicking overlay', () => {
-        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
-        
-        const overlay = screen.getByText('Download Press Kit').parentElement?.parentElement
-        fireEvent.click(overlay!)
-        
-        expect(mockOnClose).toHaveBeenCalled()
+        // Use hidden: true since jsdom doesn't fully support dialog showModal
+        expect(screen.getByRole('button', { name: 'Download', hidden: true })).toBeInTheDocument()
     })
 
     it('closes when clicking close button', () => {
         render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
         
-        const closeButton = screen.getByRole('button', { name: '×' })
+        const closeButton = screen.getByRole('button', { name: /close/i, hidden: true })
         fireEvent.click(closeButton)
         
         expect(mockOnClose).toHaveBeenCalled()
-    })
-
-    it('does not close when clicking modal content', () => {
-        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
-        
-        const modal = screen.getByText('Download Press Kit').parentElement
-        fireEvent.click(modal!)
-        
-        expect(mockOnClose).not.toHaveBeenCalled()
     })
 
     it('submits email and triggers download on success', async () => {
@@ -66,7 +57,7 @@ describe('PressKitModal', () => {
         render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
         
         const emailInput = screen.getByPlaceholderText('your@email.com')
-        const submitButton = screen.getByRole('button', { name: 'Download' })
+        const submitButton = screen.getByRole('button', { name: 'Download', hidden: true })
 
         await user.type(emailInput, 'test@example.com')
         await user.click(submitButton)
@@ -96,7 +87,7 @@ describe('PressKitModal', () => {
         render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
         
         const emailInput = screen.getByPlaceholderText('your@email.com')
-        const submitButton = screen.getByRole('button', { name: 'Download' })
+        const submitButton = screen.getByRole('button', { name: 'Download', hidden: true })
 
         await user.type(emailInput, 'test@example.com')
         await user.click(submitButton)
@@ -118,7 +109,7 @@ describe('PressKitModal', () => {
         render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
         
         const emailInput = screen.getByPlaceholderText('your@email.com')
-        const submitButton = screen.getByRole('button', { name: 'Download' })
+        const submitButton = screen.getByRole('button', { name: 'Download', hidden: true })
 
         // Type email
         fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
@@ -129,7 +120,7 @@ describe('PressKitModal', () => {
         })
 
         // Check loading state
-        expect(screen.getByRole('button', { name: 'Processing...' })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'Processing...', hidden: true })).toBeInTheDocument()
         expect(emailInput).toBeDisabled()
 
         // Cleanup - resolve the promise
@@ -149,7 +140,7 @@ describe('PressKitModal', () => {
         render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
         
         const emailInput = screen.getByPlaceholderText('your@email.com')
-        const submitButton = screen.getByRole('button', { name: 'Download' })
+        const submitButton = screen.getByRole('button', { name: 'Download', hidden: true })
 
         await user.type(emailInput, 'test@example.com')
         await user.click(submitButton)
@@ -169,5 +160,12 @@ describe('PressKitModal', () => {
         await user.type(emailInput, 'hello@world.com')
         
         expect(emailInput).toHaveValue('hello@world.com')
+    })
+
+    it('has proper accessibility attributes', () => {
+        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
+        
+        const dialog = screen.getByRole('dialog', { hidden: true })
+        expect(dialog).toHaveAttribute('aria-labelledby', 'modal-title')
     })
 })

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./PressKitModal.module.css";
 
 interface PressKitModalProps {
@@ -12,6 +12,31 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (isOpen) {
+      dialog.showModal();
+    } else {
+      dialog.close();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const handleCancel = (e: Event) => {
+      e.preventDefault();
+      onClose();
+    };
+
+    dialog.addEventListener("cancel", handleCancel);
+    return () => dialog.removeEventListener("cancel", handleCancel);
+  }, [onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,26 +77,25 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
     }
   };
 
-  if (!isOpen) return null;
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
+    if (e.target === dialogRef.current) {
       onClose();
     }
   };
 
   return (
-    <div 
-      className={styles.overlay} 
-      onClick={onClose}
-      onKeyDown={handleKeyDown}
-      role="dialog"
-      aria-modal="true"
+    <dialog 
+      ref={dialogRef}
+      className={styles.dialog}
+      onClick={handleBackdropClick}
       aria-labelledby="modal-title"
-      tabIndex={-1}
     >
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>
+      <div className={styles.modal}>
+        <button 
+          className={styles.closeButton} 
+          onClick={onClose}
+          aria-label="Close dialog"
+        >
           ×
         </button>
         
@@ -97,10 +121,13 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
                 required
                 className={styles.input}
                 disabled={status === "loading"}
+                aria-describedby={errorMessage ? "email-error" : undefined}
               />
               
               {errorMessage && (
-                <p className={styles.errorMessage}>{errorMessage}</p>
+                <p id="email-error" className={styles.errorMessage} role="alert">
+                  {errorMessage}
+                </p>
               )}
               
               <button 
@@ -114,6 +141,6 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
           </>
         )}
       </div>
-    </div>
+    </dialog>
   );
 }

@@ -1,15 +1,21 @@
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.dialog {
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: visible;
+}
+
+.dialog::backdrop {
   background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.dialog[open] {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  backdrop-filter: blur(5px);
 }
 
 .modal {
@@ -18,7 +24,7 @@
   border-radius: 16px;
   padding: 2.5rem;
   max-width: 400px;
-  width: 90%;
+  width: 90vw;
   position: relative;
   box-shadow: 0 0 40px rgba(221, 36, 49, 0.2);
 }
@@ -37,8 +43,11 @@
   transition: color 0.2s;
 }
 
-.closeButton:hover {
+.closeButton:hover,
+.closeButton:focus {
   color: #fff;
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .title {
@@ -51,7 +60,7 @@
 }
 
 .description {
-  color: #ccc;
+  color: #d4d4d4;
   margin: 0 0 1.5rem 0;
   font-size: 0.95rem;
 }
@@ -75,7 +84,7 @@
 }
 
 .input::placeholder {
-  color: #666;
+  color: #9ca3af;
 }
 
 .input:disabled {
@@ -101,6 +110,11 @@
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 0 20px rgba(221, 36, 49, 0.4);
+}
+
+.submitButton:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .submitButton:disabled {
