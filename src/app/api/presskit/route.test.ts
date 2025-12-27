@@ -14,10 +14,10 @@ jest.mock('resend', () => ({
 }))
 
 // Mock Vercel KV
-jest.mock('@vercel/kv', () => ({
-    kv: {
+jest.mock('@upstash/redis', () => ({
+    Redis: jest.fn().mockImplementation(() => ({
         zadd: jest.fn().mockResolvedValue(1),
-    },
+    })),
 }))
 
 describe('Presskit API Route', () => {

@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
 
 // Initialize Resend - will be undefined if API key not set
 const resend = process.env.RESEND_API_KEY 
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
+// Initialize Redis - will be undefined if not configured
+const redis = process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
+  ? new Redis({
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
+    })
+  : null;
+
 // Email to receive notifications
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || "";
-
-// Check if KV is configured
-const isKvConfigured = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 
 interface EmailEntry {
   email: string;
@@ -19,20 +24,20 @@ interface EmailEntry {
   userAgent?: string;
 }
 
-async function saveToKv(entry: EmailEntry): Promise<void> {
-  if (!isKvConfigured) {
-    console.log("KV storage skipped - not configured");
+async function saveToRedis(entry: EmailEntry): Promise<void> {
+  if (!redis) {
+    console.log("Redis storage skipped - not configured");
     return;
   }
 
   try {
     // Store in a sorted set with timestamp as score for easy retrieval
-    await kv.zadd("presskit:emails", {
+    await redis.zadd("presskit:emails", {
       score: Date.now(),
       member: JSON.stringify(entry),
     });
   } catch (error) {
-    console.error("Failed to save to KV:", error);
+    console.error("Failed to save to Redis:", error);
   }
 }
 
@@ -87,9 +92,9 @@ export async function POST(request: NextRequest) {
       userAgent: request.headers.get("user-agent") || undefined,
     };
 
-    // Save to KV and send notification in parallel
+    // Save to Redis and send notification in parallel
     await Promise.all([
-      saveToKv(entry),
+      saveToRedis(entry),
       sendNotificationEmail(entry),
     ]);
 
