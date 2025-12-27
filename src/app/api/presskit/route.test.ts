@@ -48,7 +48,7 @@ describe('Presskit API Route', () => {
         it('returns error for invalid email format', async () => {
             const request = new NextRequest('http://localhost/api/presskit', {
                 method: 'POST',
-                body: JSON.stringify({ email: 'invalid-email' }),
+                body: JSON.stringify({ email: 'invalid-email-no-at-sign' }),
             })
 
             const response = await POST(request)

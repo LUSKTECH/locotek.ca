@@ -4,8 +4,8 @@ import { useState } from "react";
 import styles from "./PressKitModal.module.css";
 
 interface PressKitModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
 }
 
 export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
@@ -35,7 +35,7 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
         link.download = "LOCOTEK-PressKit.zip";
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
+        link.remove();
         
         // Reset and close after delay
         setTimeout(() => {
@@ -54,14 +54,28 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
 
   if (!isOpen) return null;
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onClose();
+    }
+  };
+
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div 
+      className={styles.overlay} 
+      onClick={onClose}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      tabIndex={-1}
+    >
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeButton} onClick={onClose}>
           ×
         </button>
         
-        <h2 className={styles.title}>Download Press Kit</h2>
+        <h2 id="modal-title" className={styles.title}>Download Press Kit</h2>
         
         {status === "success" ? (
           <p className={styles.successMessage}>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
 // Store emails in a JSON file (works on both Vercel and Netlify)
 // For production, consider using a database like Vercel KV, Supabase, or similar
@@ -49,9 +49,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // Basic email validation - using a simple, non-backtracking pattern
+    // Limit length to prevent ReDoS attacks
+    if (email.length > 254 || !email.includes("@") || !email.includes(".")) {
       return NextResponse.json(
         { error: "Invalid email format" },
         { status: 400 }
