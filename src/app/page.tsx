@@ -2,14 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Facebook, X, SoundCloud } from "@/components/Icons";
 import styles from "./page.module.css";
-
-// Assuming Lucide doesn't have SoundCloud, using CloudLightning or Music as placeholder, 
-// or I can import a custom SVG if needed. 
-// Actually, Lucide doesn't have specific brand icons usually. 
-// I'll check if I need to use another lib or just text/generic.
-// Wait, Lucide usually has generic icons. 
-// For social links, maybe just text or generic icons if Lucide lacks brands. 
-// I'll stick to text + simple icons. 
+import VantaFog from "@/components/VantaFog";
+import PressKitButton from "@/components/PressKitButton";
 
 export default function Home() {
   return (
@@ -17,7 +11,7 @@ export default function Home() {
       {/* Background Image */}
       <div className={styles.backgroundOverlay}>
         <Image
-          src="/bg-fog.png"
+          src="/bg-fog-flat.jpg"
           alt="Background"
           fill
           sizes="100vw"
@@ -29,6 +23,10 @@ export default function Home() {
           style={{ position: "absolute", inset: 0, background: "rgba(0, 0, 0, 0.4)" }}
           suppressHydrationWarning
         />
+        {/* Moving Fog Animation at Bottom */}
+        <div className={styles.fogContainer}>
+          <VantaFog />
+        </div>
       </div>
 
       <div className={styles.hero}>
@@ -47,20 +45,22 @@ export default function Home() {
 
       <div className={styles.grid}>
         <Link href="https://www.facebook.com/Locotek/" target="_blank" rel="noopener noreferrer" className={styles.card}>
-          <Facebook color="#00ff94" width={24} height={24} />
+          <Facebook color="#dd2431" width={24} height={24} />
           <span className={styles.cardText}>Facebook</span>
         </Link>
 
         <Link href="https://soundcloud.com/locotek" target="_blank" rel="noopener noreferrer" className={styles.card}>
-          <SoundCloud color="#00ff94" width={24} height={24} />
+          <SoundCloud color="#dd2431" width={24} height={24} />
           <span className={styles.cardText}>SoundCloud</span>
         </Link>
 
         <Link href="https://x.com/LocotekOfficial" target="_blank" rel="noopener noreferrer" className={styles.card}>
-          <X color="#00ff94" width={24} height={24} />
+          <X color="#dd2431" width={24} height={24} />
           <span className={styles.cardText}>X</span>
         </Link>
       </div>
+
+      <PressKitButton />
 
       <footer className={styles.footer}>
         © {new Date().getFullYear()} LOCOTEK.CA | <a href="https://lusk.tech" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>Lusk Technologies</a>
