@@ -1,0 +1,69 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Toronto"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "lusky3"
+    assignees:
+      - "lusky3"
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    # Group updates for better PR management
+    groups:
+      production-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@types/*"
+          - "eslint*"
+          - "jest*"
+          - "@testing-library/*"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        patterns:
+          - "@types/*"
+          - "eslint*"
+          - "jest*"
+          - "@testing-library/*"
+          - "typescript"
+        update-types:
+          - "minor"
+          - "patch"
+    # Ignore specific dependencies if needed
+    ignore:
+      # Example: ignore major version updates for specific packages
+      # - dependency-name: "react"
+      #   update-types: ["version-update:semver-major"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Toronto"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "lusky3"
+    assignees:
+      - "lusky3"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
