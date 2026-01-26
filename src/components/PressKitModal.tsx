@@ -65,9 +65,9 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
 
       if (response.ok && data.success) {
         setStatus("success");
-        // Trigger download
+        // Trigger download - use hardcoded URL to prevent any XSS risk
         const link = document.createElement("a");
-        link.href = data.downloadUrl || "/uploads/PressKit.zip";
+        link.href = "/uploads/PressKit.zip";
         link.download = "LOCOTEK-PressKit.zip";
         document.body.appendChild(link);
         link.click();
@@ -80,11 +80,13 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
           onClose();
         }, 2000);
       } else {
-        throw new Error(data.error || "Form submission failed");
+        // Don't use API error message to prevent XSS
+        throw new Error("Form submission failed");
       }
     } catch (err) {
       setStatus("error");
-      setErrorMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      // Sanitize error message to prevent XSS - only show generic message
+      setErrorMessage("Something went wrong. Please try again.");
     }
   };
 

@@ -93,7 +93,8 @@ describe('PressKitModal', () => {
         await user.click(submitButton)
 
         await waitFor(() => {
-            expect(screen.getByText('Email already registered')).toBeInTheDocument()
+            // Generic error message shown for security (XSS prevention)
+            expect(screen.getByText('Something went wrong. Please try again.')).toBeInTheDocument()
         })
     })
 
@@ -146,7 +147,8 @@ describe('PressKitModal', () => {
         await user.click(submitButton)
 
         await waitFor(() => {
-            expect(screen.getByText('Network error')).toBeInTheDocument()
+            // Generic error message shown for security (XSS prevention)
+            expect(screen.getByText('Something went wrong. Please try again.')).toBeInTheDocument()
         })
     })
 
