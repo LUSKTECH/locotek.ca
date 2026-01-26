@@ -84,6 +84,8 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
         throw new Error("Form submission failed");
       }
     } catch (err) {
+      // Log error for debugging but don't expose details to user (XSS prevention)
+      console.error("Press kit download error:", err);
       setStatus("error");
       // Sanitize error message to prevent XSS - only show generic message
       setErrorMessage("Something went wrong. Please try again.");
