@@ -170,4 +170,69 @@ describe('PressKitModal', () => {
         const dialog = screen.getByRole('dialog', { hidden: true })
         expect(dialog).toHaveAttribute('aria-labelledby', 'modal-title')
     })
+
+    it('closes on cancel event (Escape key)', () => {
+        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
+        
+        const dialog = screen.getByRole('dialog', { hidden: true })
+        
+        // Simulate cancel event (triggered by Escape key)
+        const cancelEvent = new Event('cancel', { bubbles: true, cancelable: true })
+        fireEvent(dialog, cancelEvent)
+        
+        expect(mockOnClose).toHaveBeenCalled()
+    })
+
+    it('closes when clicking on dialog backdrop', () => {
+        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
+        
+        const dialog = screen.getByRole('dialog', { hidden: true })
+        
+        // Simulate click on dialog itself (backdrop)
+        fireEvent.click(dialog)
+        
+        expect(mockOnClose).toHaveBeenCalled()
+    })
+
+    it('does not close when clicking inside modal content', () => {
+        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
+        
+        // Click on the modal content (not the dialog backdrop)
+        const title = screen.getByText('Download Press Kit')
+        fireEvent.click(title)
+        
+        // onClose should not be called when clicking inside content
+        expect(mockOnClose).not.toHaveBeenCalled()
+    })
+
+    it('resets form and closes after successful download', async () => {
+        jest.useFakeTimers()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+        
+        ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ success: true }),
+        })
+
+        render(<PressKitModal isOpen={true} onClose={mockOnClose} />)
+        
+        const emailInput = screen.getByPlaceholderText('your@email.com')
+        const submitButton = screen.getByRole('button', { name: 'Download', hidden: true })
+
+        await user.type(emailInput, 'test@example.com')
+        await user.click(submitButton)
+
+        await waitFor(() => {
+            expect(screen.getByText('Thanks! Your download should start automatically.')).toBeInTheDocument()
+        })
+
+        // Fast-forward the 2 second timeout
+        await act(async () => {
+            jest.advanceTimersByTime(2000)
+        })
+
+        expect(mockOnClose).toHaveBeenCalled()
+        
+        jest.useRealTimers()
+    })
 })

@@ -14,6 +14,10 @@ jest.mock('three', () => ({
 }))
 
 describe('VantaFog', () => {
+    beforeEach(() => {
+        jest.clearAllMocks()
+    })
+
     it('renders a container div', () => {
         render(<VantaFog />)
         
@@ -47,5 +51,25 @@ describe('VantaFog', () => {
         
         // Note: The destroy is called in the cleanup, but due to the async nature
         // and the way the effect is set up, we just verify the component unmounts cleanly
+    })
+
+    it('handles vanta initialization error gracefully', async () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+        const mockFog = jest.requireMock('vanta/dist/vanta.fog.min')
+        mockFog.mockImplementation(() => {
+            throw new Error('WebGL not supported')
+        })
+        
+        // Should not throw
+        render(<VantaFog />)
+        
+        await waitFor(() => {
+            expect(consoleSpy).toHaveBeenCalledWith(
+                'Failed to load Vanta fog:',
+                expect.any(Error)
+            )
+        })
+        
+        consoleSpy.mockRestore()
     })
 })
