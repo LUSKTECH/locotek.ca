@@ -49,7 +49,7 @@ export default function PressKitModal({ isOpen, onClose }: PressKitModalProps) {
     };
   }, [onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("loading");
     setErrorMessage("");
