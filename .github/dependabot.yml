@@ -42,12 +42,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    # Ignore specific dependencies if needed
-    ignore:
-      # Example: ignore major version updates for specific packages
-      # - dependency-name: "react"
-      #   update-types: ["version-update:semver-major"]
-
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
