@@ -35,9 +35,9 @@ describe('Presskit API Route', () => {
         // Reset env for each test
         process.env = { ...originalEnv }
         // Re-import to get fresh module with current env
-        const module = await import('./route')
-        POST = module.POST
-        GET = module.GET
+        const routeModule = await import('./route')
+        POST = routeModule.POST
+        GET = routeModule.GET
     })
 
     afterAll(() => {
