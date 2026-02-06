@@ -1,0 +1,21 @@
+name: Discord Notifications
+
+on:
+  pull_request:
+    types: [opened, closed, reopened]
+  workflow_run:
+    workflows: [CI, Security, Deploy]
+    types: [completed]
+
+jobs:
+  notify-pr:
+    if: github.event_name == 'pull_request'
+    uses: LUSKTECH/.github/.github/workflows/discord-pr.yml@main
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+  notify-failure:
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
+    uses: LUSKTECH/.github/.github/workflows/discord-workflow-failure.yml@main
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
