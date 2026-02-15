@@ -26,9 +26,9 @@ jobs:
         if: github.event_name == 'pull_request'
         run: sleep 10
 
-      - name: Enable auto-merge
+      - name: Approve PR
         if: github.event_name == 'pull_request'
-        run: gh pr merge --auto --squash "$PR_URL"
+        run: gh pr review --approve "$PR_URL" || true
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,7 +37,7 @@ jobs:
         if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
         run: |
           gh pr review --approve "$PR_URL" || true
-          gh pr merge --auto --squash "$PR_URL" || true
+          gh pr merge --squash "$PR_URL" || true
         env:
           PR_URL: ${{ github.event.workflow_run.pull_requests[0].html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
