@@ -26,7 +26,7 @@ updates:
           - "*"
         exclude-patterns:
           - "@types/*"
-          - "eslint*"
+          - "oxlint"
           - "jest*"
           - "@testing-library/*"
         update-types:
@@ -35,7 +35,7 @@ updates:
       development-dependencies:
         patterns:
           - "@types/*"
-          - "eslint*"
+          - "oxlint"
           - "jest*"
           - "@testing-library/*"
           - "typescript"

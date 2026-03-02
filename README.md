@@ -61,7 +61,7 @@ The output will be generated in the `.next` directory.
 
 ### Linting
 
-This project uses **ESLint** with `next/core-web-vitals` to ensure code quality and accessibility (a11y) standards.
+This project uses **oxlint** with `jsx-a11y`, `react`, `nextjs`, and `typescript` plugins to ensure code quality and accessibility (a11y) standards.
 
 ```bash
 npm run lint

@@ -49,3 +49,8 @@ next-env.d.ts
 
 .playwright-mcp
 .swc
+
+.kiro
+.cursor
+.claude
+.vscode
