@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Facebook, X, SoundCloud } from "@/components/Icons";
 import styles from "./page.module.css";
 import VantaFog from "@/components/VantaFog";
+import FogInteraction from "@/components/FogInteraction";
 import PressKitButton from "@/components/PressKitButton";
 
 export default function Home() {
@@ -26,6 +27,7 @@ export default function Home() {
         {/* Moving Fog Animation at Bottom */}
         <div className={styles.fogContainer}>
           <VantaFog />
+          <FogInteraction />
         </div>
       </div>
 
