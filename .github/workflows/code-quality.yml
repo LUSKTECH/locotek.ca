@@ -6,13 +6,12 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
-
 jobs:
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: github.actor != 'dependabot[bot]'
     steps:
       - name: Check for SonarQube token
@@ -50,6 +49,8 @@ jobs:
   codecov:
     name: Code Coverage
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: github.actor != 'dependabot[bot]'
     steps:
       - name: Check for Codecov token
