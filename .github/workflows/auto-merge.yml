@@ -1,9 +1,8 @@
 name: Auto Merge Dependabot
 
 on:
-  workflow_run:
-    workflows: ["CI Analysis"]
-    types: [completed]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   auto-merge:
@@ -11,50 +10,26 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    if: >
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
-      - name: Find associated PR
-        id: find-pr
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
-        run: |
-          PR_JSON=$(gh pr list --repo "$REPO" --head "$HEAD_BRANCH" --state open --json url,author --jq '.[0]')
-          if [ -z "$PR_JSON" ] || [ "$PR_JSON" = "null" ]; then
-            echo "No open PR found for branch $HEAD_BRANCH"
-            exit 0
-          fi
-          PR_AUTHOR=$(echo "$PR_JSON" | jq -r '.author.login')
-          if [ "$PR_AUTHOR" != "dependabot[bot]" ]; then
-            echo "PR author is $PR_AUTHOR, not dependabot. Skipping."
-            exit 0
-          fi
-          PR_URL=$(echo "$PR_JSON" | jq -r '.url')
-          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
-
       - name: Dependabot metadata
-        if: steps.find-pr.outputs.pr_url
         id: metadata
         uses: dependabot/fetch-metadata@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-commit-verification: true
 
-      - name: Wait for all checks to settle
-        if: steps.find-pr.outputs.pr_url
+      - name: Wait for all other checks to settle
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ steps.find-pr.outputs.pr_url }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           echo "Waiting for checks on $PR_URL..."
           # Give other workflows time to start
           sleep 30
-          # Wait up to 10 minutes for all checks to complete
+          # Wait up to 10 minutes for all checks (other than this job) to complete
           for i in $(seq 1 20); do
-            PENDING=$(gh pr checks "$PR_URL" --json state --jq '[.[] | select(.state == "PENDING")] | length')
+            PENDING=$(gh pr checks "$PR_URL" --json name,state --jq '[.[] | select(.state == "PENDING" and (.name | contains("auto-merge") | not))] | length')
             if [ "$PENDING" = "0" ]; then
               echo "All checks completed."
               break
@@ -64,13 +39,12 @@ jobs:
           done
 
       - name: Verify all checks passed
-        if: steps.find-pr.outputs.pr_url
         id: verify
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ steps.find-pr.outputs.pr_url }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          FAILED=$(gh pr checks "$PR_URL" --json state --jq '[.[] | select(.state == "FAILURE" or .state == "ERROR")] | length')
+          FAILED=$(gh pr checks "$PR_URL" --json name,state --jq '[.[] | select((.state == "FAILURE" or .state == "ERROR") and (.name | contains("auto-merge") | not))] | length')
           if [ "$FAILED" != "0" ]; then
             echo "Some checks failed, skipping merge."
             exit 0
@@ -81,12 +55,12 @@ jobs:
         if: steps.verify.outputs.all_passed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ steps.find-pr.outputs.pr_url }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr review --approve "$PR_URL" || true
 
       - name: Merge PR
         if: steps.verify.outputs.all_passed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ steps.find-pr.outputs.pr_url }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr merge --squash "$PR_URL"
