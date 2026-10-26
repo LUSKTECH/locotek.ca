@@ -6,6 +6,8 @@ import VantaFog from "@/components/VantaFog";
 import FogInteraction from "@/components/FogInteraction";
 import PressKitButton from "@/components/PressKitButton";
 
+const currentYear = new Date().getFullYear();
+
 export default function Home() {
   return (
     <main className={styles.container}>
@@ -65,7 +67,7 @@ export default function Home() {
       <PressKitButton />
 
       <footer className={styles.footer}>
-        © {new Date().getFullYear()} LOCOTEK.CA | <a href="https://lusk.tech" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>Lusk Technologies</a>
+        © {currentYear} LOCOTEK.CA | <a href="https://lusk.tech" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>Lusk Technologies</a>
       </footer>
     </main>
   );
