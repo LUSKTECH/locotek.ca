@@ -9,7 +9,7 @@ on:
 jobs:
   sonarqube:
     name: SonarQube Analysis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     if: github.actor != 'dependabot[bot]'
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-node@v7
         if: steps.check.outputs.skip != 'true'
         with:
-          node-version: 22
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -48,7 +48,7 @@ jobs:
 
   codecov:
     name: Code Coverage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     if: github.actor != 'dependabot[bot]'
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/setup-node@v7
         if: steps.check.outputs.skip != 'true'
         with:
-          node-version: 22
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
