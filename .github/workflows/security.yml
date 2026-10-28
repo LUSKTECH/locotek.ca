@@ -9,27 +9,6 @@ on:
     - cron: '0 6 * * 1'
 
 jobs:
-  codeql:
-    name: CodeQL Analysis
-    runs-on: ubuntu-26.04
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4.39.1
-        with:
-          languages: javascript-typescript
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v4.39.1
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4.39.1
-
   snyk:
     name: Snyk Security Scan
     runs-on: ubuntu-26.04
