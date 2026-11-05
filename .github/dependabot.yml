@@ -19,6 +19,12 @@ updates:
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
+    # three >=0.186 breaks `postprocessing`'s peer range (via
+    # @react-three/postprocessing), so npm install fails or resolves a broken
+    # tree. Hold at 0.185.x until postprocessing widens its range, then drop this.
+    ignore:
+      - dependency-name: "three"
+        versions: [">=0.186.0"]
     # Group updates for better PR management
     groups:
       production-dependencies:
